@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,12 +21,12 @@ const Navbar = () => {
     setIsMounted(true);
   }, []);
 
-  // to hide navbar from home and login page
+  // Hide navbar on login and home page
   if (!isMounted || pathname === "/login" || pathname === "/") {
     return null;
   }
 
-  // to delete token
+  // Sign out and redirect
   const handleSignOut = () => {
     localStorage.removeItem("access_token");
     router.push("/login");
@@ -36,7 +35,7 @@ const Navbar = () => {
   return (
     <nav className="bg-gray-800 p-4 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
-        <Link href={"/data"}>
+        <Link href="/data">
           <h1 className="text-white text-2xl font-bold">Data Page</h1>
         </Link>
 
@@ -48,7 +47,7 @@ const Navbar = () => {
                   src="https://cdn.pixabay.com/photo/2018/08/28/13/29/avatar-3637561_1280.png"
                   alt="Avatar"
                 />
-                <AvatarFallback>JD</AvatarFallback>
+                <AvatarFallback>AS</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">

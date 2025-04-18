@@ -5,16 +5,25 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+type Business = {
+  _id: string;
+  fullName: string;
+  email: string;
+  status: string;
+  shopLogo?: {
+    url: string;
+  };
+};
+
 export default function BusinessCardView() {
   const router = useRouter();
-  const [businessData, setBusinessData] = useState<any[]>([]);
+  const [businessData, setBusinessData] = useState<Business[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
 
-    // to check if token is available or not
     if (!token) {
       router.push("/login");
     } else {
@@ -22,7 +31,6 @@ export default function BusinessCardView() {
     }
   }, [router]);
 
-  // to fetch data
   const fetchBusinessData = async (token: string) => {
     try {
       const response = await fetch(
@@ -41,8 +49,12 @@ export default function BusinessCardView() {
 
       const data = await response.json();
       setBusinessData(data.data.data);
-    } catch (err: any) {
-      setError(err.message || "Unknown error");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Unknown error");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -54,12 +66,8 @@ export default function BusinessCardView() {
 
   return (
     <div className="container mx-auto p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {/* for data rendering */}
       {businessData.map((business) => (
-        <Link
-          key={business._id}
-          href={`/data/${business._id}`} // Pass only the business ID here
-        >
+        <Link key={business._id} href={`/data/${business._id}`}>
           <Card className="shadow-md h-[13rem] hover:shadow-xl transition duration-300 cursor-pointer">
             <CardHeader className="flex flex-col items-center justify-center">
               {business.shopLogo?.url && (
