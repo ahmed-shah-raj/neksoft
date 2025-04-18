@@ -42,7 +42,7 @@ export default function LoginPage() {
       } else {
         setMessage(data?.message || "Login failed ❌");
       }
-    } catch (err) {
+    } catch (error) {
       setMessage("An error occurred.");
     }
 
