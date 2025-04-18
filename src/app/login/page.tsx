@@ -29,20 +29,20 @@ export default function LoginPage() {
 
       const data = await response.json();
 
-      // Get access token from the response
+      // access token from the response
       const token =
         data?.data?.access_token || data?.access_token || data?.data?.token;
 
       if (response.ok && token) {
         localStorage.setItem("access_token", token); // Save token
-        setMessage("Login successful ✅");
+        setMessage("Login successful ");
 
-        // Redirect to /data immediately
         router.push("/data");
       } else {
-        setMessage(data?.message || "Login failed ❌");
+        setMessage(data?.message || "Login failed ");
       }
     } catch (error) {
+      console.error("Login error:", error); 
       setMessage("An error occurred.");
     }
 
