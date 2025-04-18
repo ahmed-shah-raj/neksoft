@@ -5,6 +5,25 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
+// business type
+type Business = {
+  data: {
+    fullName?: string;
+    email?: string;
+    id?: string;
+    isAdminSeller?: boolean;
+    phoneNumber?: string;
+    sellerEmail?: string;
+    sellerId?: string;
+    sellerType?: string;
+    accountType?: string;
+    shopLogo?: {
+      url?: string;
+    };
+  };
+  description?: string;
+};
+
 export default function BusinessDetailPage({
   params,
 }: {
@@ -13,11 +32,10 @@ export default function BusinessDetailPage({
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [business, setBusiness] = useState<any>(null);
+  const [business, setBusiness] = useState<Business | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
-    // to check if token is available or not
     if (!token) {
       router.push("/login");
     } else {
@@ -25,7 +43,6 @@ export default function BusinessDetailPage({
     }
   }, [router]);
 
-  // to fetch data
   const fetchBusinessData = async (token: string) => {
     try {
       const response = await fetch(
@@ -44,22 +61,28 @@ export default function BusinessDetailPage({
 
       const data = await response.json();
       setBusiness(data);
-    } catch (err: any) {
-      setError(err.message || "Unknown error");
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Unknown error");
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-  if (isLoading)
+  if (isLoading) {
     return <div className="text-center mt-10 text-lg">Loading...</div>;
+  }
 
-  if (error)
+  if (error) {
     return (
       <div className="text-center mt-10 text-red-500 text-lg">
         Error: {error}
       </div>
     );
+  }
 
   const data = business?.data;
 
@@ -87,63 +110,26 @@ export default function BusinessDetailPage({
         </CardHeader>
 
         <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-6 p-6">
-          <div>
-            <p className="text-sm font-medium text-gray-500">Account Type</p>
-            <p className="text-base font-semibold text-gray-800">
-              {data?.accountType ?? "N/A"}
-            </p>
-          </div>
-
-          <div>
-            <p className="text-sm font-medium text-gray-500">Email</p>
-            <p className="text-base font-semibold text-gray-800">
-              {data?.email ?? "N/A"}
-            </p>
-          </div>
-
-          <div>
-            <p className="text-sm font-medium text-gray-500">ID</p>
-            <p className="text-base font-semibold text-gray-800">
-              {data?.id ?? "N/A"}
-            </p>
-          </div>
-
-          <div>
-            <p className="text-sm font-medium text-gray-500">Is Admin Seller</p>
-            <p className="text-base font-semibold text-gray-800">
-              {data?.isAdminSeller ? "Yes" : "No"}
-            </p>
-          </div>
-
-          <div>
-            <p className="text-sm font-medium text-gray-500">Phone Number</p>
-            <p className="text-base font-semibold text-gray-800">
-              {data?.phoneNumber ?? "N/A"}
-            </p>
-          </div>
-
-          <div>
-            <p className="text-sm font-medium text-gray-500">Seller Email</p>
-            <p className="text-base font-semibold text-gray-800">
-              {data?.sellerEmail ?? "N/A"}
-            </p>
-          </div>
-
-          <div>
-            <p className="text-sm font-medium text-gray-500">Seller ID</p>
-            <p className="text-base font-semibold text-gray-800">
-              {data?.sellerId ?? "N/A"}
-            </p>
-          </div>
-
-          <div>
-            <p className="text-sm font-medium text-gray-500">Seller Type</p>
-            <p className="text-base font-semibold text-gray-800">
-              {data?.sellerType ?? "N/A"}
-            </p>
-          </div>
+          <InfoBlock label="Account Type" value={data?.accountType} />
+          <InfoBlock label="Email" value={data?.email} />
+          <InfoBlock label="ID" value={data?.id} />
+          <InfoBlock label="Is Admin Seller" value={data?.isAdminSeller ? "Yes" : "No"} />
+          <InfoBlock label="Phone Number" value={data?.phoneNumber} />
+          <InfoBlock label="Seller Email" value={data?.sellerEmail} />
+          <InfoBlock label="Seller ID" value={data?.sellerId} />
+          <InfoBlock label="Seller Type" value={data?.sellerType} />
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+// Reusable component for displaying key-value pairs
+function InfoBlock({ label, value }: { label: string; value?: string }) {
+  return (
+    <div>
+      <p className="text-sm font-medium text-gray-500">{label}</p>
+      <p className="text-base font-semibold text-gray-800">{value ?? "N/A"}</p>
     </div>
   );
 }
