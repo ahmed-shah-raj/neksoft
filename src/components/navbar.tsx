@@ -14,7 +14,6 @@ import Link from "next/link";
 const Navbar = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const [userName] = useState<string>("Ahmed Shah");
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -29,7 +28,7 @@ const Navbar = () => {
   // Sign out and redirect
   const handleSignOut = () => {
     localStorage.removeItem("access_token");
-    router.push("/login");
+    router.push("/");
   };
 
   return (
@@ -52,7 +51,7 @@ const Navbar = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem disabled className="cursor-default">
-                {userName}
+                AHMED SHAH
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={handleSignOut}
